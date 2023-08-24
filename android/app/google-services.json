@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "483265395038",
+    "project_id": "cityvista-86269",
+    "storage_bucket": "cityvista-86269.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483265395038:android:0ddb062f33afa36f1f37cf",
+        "android_client_info": {
+          "package_name": "com.emirs.cityvista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "483265395038-n12or05qr9fovdf31pcrmde19hmlrgst.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRZJ0UhdypBrKn7OEsZPXWMdYaB1uwQBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "483265395038-n12or05qr9fovdf31pcrmde19hmlrgst.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
