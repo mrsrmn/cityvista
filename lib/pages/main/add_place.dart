@@ -1,6 +1,8 @@
-import 'dart:async';
 import 'dart:io';
 
+import 'package:cityvista/other/database.dart';
+import 'package:cityvista/other/models/city_place.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -163,8 +165,57 @@ class _AddPlaceState extends State<AddPlace> {
             width: double.infinity,
             height: 50,
             child: TextButton(
-              onPressed: () {
+              onPressed: () async {
+                HapticFeedback.lightImpact();
 
+                if (context.mounted) {
+                  showGeneralDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    pageBuilder: (BuildContext context, _, __) {
+                      return Container(
+                        color: Colors.black.withOpacity(.5),
+                        child: const Center(child: CircularProgressIndicator())
+                      );
+                    },
+                  );
+                }
+
+                try {
+                  List<String> imageUrls = await uploadImages();
+
+                  await Database().addPlace(CityPlace(
+                    id: placeId,
+                    authorUid: FirebaseAuth.instance.currentUser!.uid,
+                    name: nameController.text,
+                    description: descriptionController.text,
+                    geoPoint: geoPoint!,
+                    authorRating: currentRating,
+                    reviews: [],
+                    images: imageUrls
+                  ));
+
+                  if (mounted) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
+
+                  Utils.alertPopup(
+                    true,
+                    "Successfully added place. Thank you for your contribution!"
+                  );
+                } catch (e) {
+                  Utils.alertPopup(
+                    false,
+                    "Couldn't add your place."
+                  );
+
+                  debugPrint(e.toString());
+
+                  if (mounted) {
+                    Navigator.pop(context);
+                  }
+                }
               },
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all(Colors.white),
