@@ -1,19 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:cityvista/widgets/custom_text_field.dart';
 import 'package:cityvista/other/utils.dart';
 import 'package:cityvista/widgets/home_screen/add_page/location_selector.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../other/constants.dart';
 
 class AddPlace extends StatefulWidget {
   const AddPlace({super.key});
@@ -32,6 +34,7 @@ class _AddPlaceState extends State<AddPlace> {
   String address = "";
   bool addressSelected = false;
   GeoPoint? geoPoint;
+  double currentRating = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +48,16 @@ class _AddPlaceState extends State<AddPlace> {
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
+                const Text(
+                  "Name",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
                 CustomTextField(
                   controller: nameController,
                   fontWeight: FontWeight.w700,
@@ -54,6 +65,13 @@ class _AddPlaceState extends State<AddPlace> {
                   maxLength: 30,
                 ),
                 const SizedBox(height: 10),
+                const Text(
+                  "Description",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
                 CustomTextField(
                   controller: descriptionController,
                   fontWeight: FontWeight.w700,
@@ -63,7 +81,35 @@ class _AddPlaceState extends State<AddPlace> {
                   maxLines: null,
                   minLines: 2,
                 ),
-                const SizedBox(height: 10),
+                const Text(
+                  "How was the experience?",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+                RatingBar.builder(
+                  initialRating: 3,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    currentRating = rating;
+                  },
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  "Location",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -89,6 +135,14 @@ class _AddPlaceState extends State<AddPlace> {
                   )
                 ),
                 Text(addressSelected ? address : "No location selected."),
+                const SizedBox(height: 15),
+                const Text(
+                  "Images (optional)",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -96,9 +150,32 @@ class _AddPlaceState extends State<AddPlace> {
                     child: const Text("Select Images")
                   ),
                 ),
-                const SizedBox(height: 10),
-                buildImagesView(),
+                buildImagesView()
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: TextButton(
+              onPressed: () {
+
+              },
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor: MaterialStateProperty.all(kTextColor),
+              ),
+              child: const Text(
+                "Add Place",
+                style: TextStyle(
+                  fontWeight: FontWeight.w700
+                ),
+              ),
             ),
           ),
         ),
@@ -191,7 +268,7 @@ class _AddPlaceState extends State<AddPlace> {
 
   Widget buildImagesView() {
     if (imagesList.isEmpty) {
-      return const Text("No selected images!");
+      return const Text("No images selected.");
     } else {
       return SizedBox(
         height: 150,
