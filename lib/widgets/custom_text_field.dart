@@ -1,3 +1,4 @@
+import 'package:cityvista/other/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,6 +11,13 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int? maxLength;
   final Widget? counter;
+  final double? fontSize;
+  final Color? textColor;
+  final Color? hintTextColor;
+  final double contentPadding;
+  final FontWeight? fontWeight;
+  final int? maxLines;
+  final int? minLines;
 
   const CustomTextField({
     super.key,
@@ -20,7 +28,14 @@ class CustomTextField extends StatelessWidget {
     this.fontFamily,
     this.keyboardType,
     this.maxLength,
-    this.counter
+    this.counter,
+    this.fontSize,
+    this.textColor,
+    this.hintTextColor,
+    this.contentPadding = 20,
+    this.fontWeight,
+    this.maxLines,
+    this.minLines
   });
 
   @override
@@ -31,26 +46,34 @@ class CustomTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
       maxLength: maxLength,
+      maxLines: maxLines,
+      minLines: minLines,
       style: TextStyle(
         fontFamily: fontFamily,
-        color: Colors.black
+        color: textColor,
+        fontSize: fontSize,
+        fontWeight: fontWeight
       ),
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(20),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: EdgeInsets.all(contentPadding),
         hintText: hintText,
         counter: counter,
         hintStyle: TextStyle(
           fontFamily: fontFamily,
-          color: Colors.white54
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          color: hintTextColor
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(width: 2)
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
-            color: Colors.grey,
+            color: kTextColor,
             width: 2
           )
         ),

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:cityvista/bloc/register/register_bloc.dart';
+import 'package:cityvista/other/enums/location_result.dart';
+import 'package:cityvista/other/models/city_location.dart';
 
 import 'package:bloc/bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 
 class Utils {
   static validatePhone(String value, Emitter emit) {
@@ -30,6 +34,45 @@ class Utils {
         color: success ? Colors.green : Colors.red
       ),
       shouldIconPulse: false
+    );
+  }
+
+  static Future<CityLocation> getLocation() async {
+    LatLng defaultLocation = const LatLng(48.52692741500706, 22.331241921397165);
+
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return CityLocation(
+        result: LocationResult.disabled,
+        coords: defaultLocation,
+        zoom: 3
+      );
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return CityLocation(
+          result: LocationResult.denied,
+          coords: defaultLocation,
+          zoom: 3
+        );
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return CityLocation(
+        result: LocationResult.permanentlyDenied,
+        coords: defaultLocation,
+        zoom: 3
+      );
+    }
+
+    Position currentPosition = await Geolocator.getCurrentPosition();
+    return CityLocation(
+      result: LocationResult.success,
+      coords: LatLng(currentPosition.latitude, currentPosition.longitude),
     );
   }
 }

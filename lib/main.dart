@@ -37,10 +37,15 @@ void main() async {
   Get.put(Authentication());
 
   var currentUser = FirebaseAuth.instance.currentUser;
+  try {
+    await currentUser?.reload();
 
-  if (currentUser != null && currentUser.displayName != null) {
-    runApp(const CityvistaApp(home: HomePage()));
-  } else {
+    if (currentUser != null && currentUser.displayName != null) {
+      runApp(const CityvistaApp(home: HomePage()));
+    } else {
+      runApp(const CityvistaApp(home: StartPage()));
+    }
+  } catch (_) {
     runApp(const CityvistaApp(home: StartPage()));
   }
 }
@@ -57,7 +62,7 @@ class CityvistaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: kTextColor),
-        fontFamily: "Poppins",
+        fontFamily: "Lato",
         useMaterial3: true,
       ),
       home: home,

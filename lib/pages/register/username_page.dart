@@ -12,7 +12,6 @@ import 'package:cityvista/other/utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nanoid/nanoid.dart';
 
 class UsernamePage extends StatelessWidget {
   final TextEditingController controller = TextEditingController();
@@ -98,7 +97,7 @@ class UsernamePage extends StatelessWidget {
                         return initialChild;
                       } else if (state is UsernameSetSuccess) {
                         final userRef =  FirebaseFirestore.instance.collection("users").doc(
-                          nanoid()
+                          FirebaseAuth.instance.currentUser!.uid
                         );
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           Utils.alertPopup(true, "You are ready to go!");
@@ -107,6 +106,7 @@ class UsernamePage extends StatelessWidget {
                         userRef.set({
                           "phone": FirebaseAuth.instance.currentUser!.phoneNumber!,
                           "displayName": controller.text,
+                          "favorites": [],
                           "reviews": [],
                           "places": []
                         });
