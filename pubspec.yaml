@@ -50,10 +50,11 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_map: ^5.0.0
   latlong2: ^0.9.0
-  geolocator: ^10.0.0
+  geolocator: ^9.0.2
   app_settings: ^5.0.0
   image_picker: ^1.0.3
   firebase_storage: ^11.2.6
+  location_picker_flutter_map: ^1.2.2
 
 dev_dependencies:
   flutter_test:

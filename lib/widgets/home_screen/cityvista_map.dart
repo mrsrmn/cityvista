@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:cityvista/other/enums/location_result.dart';
 import 'package:cityvista/other/models/city_location.dart';
 import 'package:cityvista/other/utils.dart';
 
 import 'package:flutter_map/flutter_map.dart';
-import 'package:app_settings/app_settings.dart';
 
 class CityvistaMap extends StatefulWidget {
   final MapController controller;
@@ -22,7 +20,7 @@ class _CityvistaMapState extends State<CityvistaMap> {
 
   @override
   void initState() {
-    future = Utils.getLocation();
+    future = Utils.getLocation(context);
     super.initState();
   }
 
@@ -36,57 +34,6 @@ class _CityvistaMapState extends State<CityvistaMap> {
         }
 
         CityLocation location = snapshot.data;
-
-        if (location.result == LocationResult.permanentlyDenied) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text("Location is Permanently Denied"),
-                  content: const Text(
-                    "If you want to see whats around you more easily, please allow in the settings."
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        AppSettings.openAppSettings(type: AppSettingsType.location);
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Open Location Settings"),
-                    )
-                  ],
-                );
-              }
-            );
-          });
-        }
-
-        if (location.result == LocationResult.disabled) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text("Location Services are Disabled"),
-                  content: const Text(
-                    "If you want to see whats around you more easily, please enable them in the settings."
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.pop(context);
-                      },
-                      child: const Text("OK"),
-                    )
-                  ],
-                );
-              }
-            );
-          });
-        }
 
         List<Marker> markers = [];
 

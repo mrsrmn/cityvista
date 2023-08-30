@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cityvista/bloc/register/register_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:cityvista/other/enums/location_result.dart';
 import 'package:cityvista/other/models/city_location.dart';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -37,11 +39,34 @@ class Utils {
     );
   }
 
-  static Future<CityLocation> getLocation() async {
+  static Future<CityLocation> getLocation(BuildContext context) async {
     LatLng defaultLocation = const LatLng(48.52692741500706, 22.331241921397165);
 
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Location Services are Disabled"),
+              content: const Text(
+                "If you want to see whats around you more easily, please enable them in the settings."
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.pop(context);
+                  },
+                  child: const Text("OK"),
+                )
+              ],
+            );
+          }
+        );
+      }
+
       return CityLocation(
         result: LocationResult.disabled,
         coords: defaultLocation,
@@ -62,6 +87,30 @@ class Utils {
     }
 
     if (permission == LocationPermission.deniedForever) {
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Location is Permanently Denied"),
+              content: const Text(
+                "If you want to see whats around you more easily, please allow in the settings."
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    AppSettings.openAppSettings(type: AppSettingsType.location);
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Open Location Settings"),
+                )
+              ],
+            );
+          }
+        );
+      }
+
       return CityLocation(
         result: LocationResult.permanentlyDenied,
         coords: defaultLocation,

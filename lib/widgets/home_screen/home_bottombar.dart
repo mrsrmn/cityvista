@@ -1,4 +1,3 @@
-import 'package:cityvista/pages/main/add_place.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,18 +5,24 @@ import 'package:flutter/services.dart';
 import 'package:cityvista/other/constants.dart';
 import 'package:cityvista/other/utils.dart';
 import 'package:cityvista/other/models/city_location.dart';
-import 'package:cityvista/other/enums/location_result.dart';
+import 'package:cityvista/pages/main/add_place.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 
 class HomeBottombar extends StatelessWidget {
   final MapController controller;
+  final Function(LatLng destLocation, double destZoom) locationSelector;
+
   final User user = FirebaseAuth.instance.currentUser!;
 
-  HomeBottombar({super.key, required this.controller});
+  HomeBottombar({
+    super.key,
+    required this.controller,
+    required this.locationSelector
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,62 +115,12 @@ class HomeBottombar extends StatelessWidget {
   
   void getCurrentLocation(BuildContext context) async {
     HapticFeedback.lightImpact();
-    CityLocation location = await Utils.getLocation();
+    CityLocation location = await Utils.getLocation(context);
 
-    if (location.result == LocationResult.permanentlyDenied) {
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Location is Permanently Denied"),
-              content: const Text(
-                "If you want to see whats around you more easily, please allow in the settings."
-              ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    AppSettings.openAppSettings(type: AppSettingsType.location);
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Open Location Settings"),
-                )
-              ],
-            );
-          }
-        );
-      }
-      return;
-    }
-
-    if (location.result == LocationResult.disabled) {
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Location Services are Disabled"),
-              content: const Text(
-                "If you want to see whats around you more easily, please enable them in the settings."
-              ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.pop(context);
-                  },
-                  child: const Text("OK"),
-                )
-              ],
-            );
-          }
-        );
-      }
-      return;
-    }
-
-    controller.move(location.coords, 12);
+    locationSelector(
+      location.coords,
+      15
+    );
     return;
   }
   
