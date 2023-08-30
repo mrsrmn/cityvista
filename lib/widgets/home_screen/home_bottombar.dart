@@ -1,3 +1,4 @@
+import 'package:cityvista/other/enums/location_result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -116,10 +117,17 @@ class HomeBottombar extends StatelessWidget {
   void getCurrentLocation(BuildContext context) async {
     HapticFeedback.lightImpact();
     CityLocation location = await Utils.getLocation(context);
+    double zoom;
+
+    if (location.result != LocationResult.success) {
+      zoom = 3;
+    } else {
+      zoom = 15;
+    }
 
     locationSelector(
       location.coords,
-      15
+      zoom
     );
     return;
   }
