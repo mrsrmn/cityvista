@@ -77,7 +77,7 @@ class _AddPlaceState extends State<AddPlace> {
                 CustomTextField(
                   controller: descriptionController,
                   fontWeight: FontWeight.w700,
-                  hintText: "Describe the experience, the atmosphere.",
+                  hintText: "Describe the experience, the atmosphere",
                   maxLength: 400,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
