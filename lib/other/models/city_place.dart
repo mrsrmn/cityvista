@@ -24,13 +24,19 @@ class CityPlace {
   });
 
   Map<String, dynamic> toJson() {
+    List<Map> mappedReviews = [];
+
+    for (CityReview review in reviews) {
+      mappedReviews.add(review.toJson());
+    }
+
     return {
       "id": id,
       "authorUid": authorUid,
       "name": name,
       "description": description,
       "geoPoint": geoPoint,
-      "reviews": reviews,
+      "reviews": mappedReviews,
       "images": images,
       "authorRating": authorRating
     };
