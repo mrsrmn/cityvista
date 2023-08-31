@@ -168,6 +168,22 @@ class _AddPlaceState extends State<AddPlace> {
               onPressed: () async {
                 HapticFeedback.lightImpact();
 
+                if (nameController.text.isEmpty || descriptionController.text.isEmpty) {
+                  Utils.alertPopup(
+                    false,
+                    "Please fill the text fields!"
+                  );
+                  return;
+                }
+
+                if (geoPoint == null) {
+                  Utils.alertPopup(
+                    false,
+                    "Please select a location!"
+                  );
+                  return;
+                }
+
                 if (context.mounted) {
                   showGeneralDialog(
                     context: context,
