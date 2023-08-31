@@ -1,5 +1,5 @@
 import 'package:cityvista/other/enums/location_result.dart';
-import 'package:cityvista/pages/main/account_page.dart';
+import 'package:cityvista/pages/main/account_page/account_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

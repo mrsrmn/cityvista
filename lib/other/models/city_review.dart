@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CityReview {
-  final double id;
+  final String id;
+  final String placeId;
   final double rating;
   final String author;
   final Timestamp timestamp;
@@ -9,6 +10,7 @@ class CityReview {
 
   CityReview({
     required this.id,
+    required this.placeId,
     required this.rating,
     required this.author,
     required this.content,
@@ -18,6 +20,7 @@ class CityReview {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
+      "placeId": placeId,
       "rating": rating,
       "author": author,
       "content": content,
@@ -28,6 +31,7 @@ class CityReview {
   factory CityReview.fromJson(Map<String, dynamic> data) {
     return CityReview(
       id: data["id"],
+      placeId: data["placeId"],
       rating: data["rating"],
       author: data["author"],
       content: data["content"],
