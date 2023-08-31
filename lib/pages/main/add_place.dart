@@ -1,23 +1,22 @@
 import 'dart:io';
 
-import 'package:cityvista/other/database.dart';
-import 'package:cityvista/other/models/city_place.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:cityvista/widgets/custom_text_field.dart';
 import 'package:cityvista/other/utils.dart';
 import 'package:cityvista/widgets/home_screen/add_page/location_selector.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:cityvista/other/constants.dart';
+import 'package:cityvista/other/database.dart';
+import 'package:cityvista/other/models/city_place.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:nanoid/nanoid.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../other/constants.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class AddPlace extends StatefulWidget {
   const AddPlace({super.key});
@@ -29,7 +28,7 @@ class AddPlace extends StatefulWidget {
 class _AddPlaceState extends State<AddPlace> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final String placeId = nanoid();
+  final String placeId = const Uuid().v1();
   final Reference storageRef = FirebaseStorage.instance.ref();
 
   List<XFile> imagesList = [];
@@ -184,18 +183,7 @@ class _AddPlaceState extends State<AddPlace> {
                   return;
                 }
 
-                if (context.mounted) {
-                  showGeneralDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    pageBuilder: (BuildContext context, _, __) {
-                      return Container(
-                        color: Colors.black.withOpacity(.5),
-                        child: const Center(child: CircularProgressIndicator())
-                      );
-                    },
-                  );
-                }
+                Utils.showLoading(context);
 
                 try {
                   List<String> imageUrls = await uploadImages();

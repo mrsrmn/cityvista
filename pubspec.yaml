@@ -46,7 +46,6 @@ dependencies:
   get_it: ^7.6.0
   timer_count_down: ^2.2.2
   cloud_firestore: ^4.9.0
-  nanoid: ^1.0.0
   cached_network_image: ^3.2.3
   flutter_map: ^5.0.0
   latlong2: ^0.9.0
@@ -56,6 +55,8 @@ dependencies:
   firebase_storage: ^11.2.6
   location_picker_flutter_map: ^1.2.2
   flutter_rating_bar: ^4.0.1
+  intl: ^0.18.1
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:
