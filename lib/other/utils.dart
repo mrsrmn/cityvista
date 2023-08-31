@@ -124,4 +124,19 @@ class Utils {
       coords: LatLng(currentPosition.latitude, currentPosition.longitude),
     );
   }
+
+  static showLoading(BuildContext context) {
+    if (context.mounted) {
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return Container(
+            color: Colors.black.withOpacity(.5),
+            child: const Center(child: CircularProgressIndicator())
+          );
+        },
+      );
+    }
+  }
 }
