@@ -1,4 +1,5 @@
 import 'package:cityvista/other/enums/location_result.dart';
+import 'package:cityvista/pages/main/account_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -135,18 +136,6 @@ class HomeBottombar extends StatelessWidget {
   void accountPageButtonTap(BuildContext context) {
     HapticFeedback.lightImpact();
 
-    /*
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const AccountPage()
-      )
-    ).then((_) async {
-      user.reload();
-      setState(() {
-        user = FirebaseAuth.instance.currentUser!;
-      });
-    });
-     */
+    Get.to(() => const AccountPage());
   }
 }
