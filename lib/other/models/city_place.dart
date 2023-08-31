@@ -35,4 +35,23 @@ class CityPlace {
       "authorRating": authorRating
     };
   }
+
+  factory CityPlace.fromJson(Map<String, dynamic> data) {
+    List<CityReview> reviews = [];
+
+    for (var review in data["reviews"]) {
+      reviews.add(CityReview.fromJson(review));
+    }
+
+    return CityPlace(
+      id: data["id"],
+      authorUid: data["authorUid"],
+      name: data["name"],
+      description: data["description"],
+      geoPoint: data["geoPoint"],
+      reviews: reviews,
+      images: data["images"],
+      authorRating: data["authorRating"]
+    );
+  }
 }
