@@ -9,6 +9,9 @@ class ReviewsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (reviews.isEmpty) {
+      return const Center(child: Text("You don't have any reviews!"));
+    }
     // TODO: implement build
     throw UnimplementedError();
   }

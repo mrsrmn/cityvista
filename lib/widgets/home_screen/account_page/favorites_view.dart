@@ -9,6 +9,9 @@ class FavoritesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (favorites.isEmpty) {
+      return const Center(child: Text("You don't have any favorite places!"));
+    }
     // TODO: implement build
     throw UnimplementedError();
   }
