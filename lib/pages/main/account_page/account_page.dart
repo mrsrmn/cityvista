@@ -25,11 +25,13 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin {
   late final TabController tabController;
+  late Future<Map<String, dynamic>> future;
 
   User user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
+    future = getProfileData();
     tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
@@ -85,7 +87,7 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
             }"),
             const SizedBox(height: 5),
             FutureBuilder(
-              future: getProfileData(),
+              future: future,
               builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
                   return const Expanded(
