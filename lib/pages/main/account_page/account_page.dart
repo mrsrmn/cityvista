@@ -71,7 +71,7 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
               width: 100,
               height: 100,
               child: CircleAvatar(
-                  child: buildPfp()
+                child: buildPfp()
               ),
             ),
             const SizedBox(height: 5),
@@ -96,9 +96,9 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
                 Map<String, dynamic> data = snapshot.data!;
 
                 return tabView(
-                  places: data["places"],
-                  favorites: data["favorites"],
-                  reviews: data["reviews"]
+                  places: data["places"] as List<CityPlace>,
+                  favorites: data["favorites"] as List<CityPlace>,
+                  reviews: data["reviews"] as List<CityReview>
                 );
               },
             )
@@ -135,29 +135,27 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
     required List<CityPlace> favorites,
     required List<CityReview> reviews,
   }) {
-    return Column(
-      children: [
-        TabBar(
-          controller: tabController,
-          tabs: const [
-            Tab(
-              icon: Icon(Icons.travel_explore),
-            ),
-            Tab(
-              icon: Icon(Icons.favorite),
-            ),
-            Tab(
-              icon: Icon(Icons.comment),
-            ),
-            Tab(
-              icon: Icon(Icons.workspace_premium),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 400,
-          child: SafeArea(
-            top: false,
+    return Expanded(
+      child: Column(
+        children: [
+          TabBar(
+            controller: tabController,
+            tabs: const [
+              Tab(
+                icon: Icon(Icons.travel_explore),
+              ),
+              Tab(
+                icon: Icon(Icons.favorite),
+              ),
+              Tab(
+                icon: Icon(Icons.comment),
+              ),
+              Tab(
+                icon: Icon(Icons.workspace_premium),
+              ),
+            ],
+          ),
+          Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 10, right: 10),
               child: TabBarView(
@@ -170,37 +168,47 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
                 ],
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
   Future<Map<String, dynamic>> getProfileData() async {
-    Map<String, dynamic> data = (await FirebaseFirestore.instance.collection(
-      "users"
-    ).doc(user.uid).get()).data()!;
+    try {
+      Map<String, dynamic> data = (await FirebaseFirestore.instance.collection(
+        "users"
+      ).doc(user.uid).get()).data()!;
 
-    List<CityPlace> places = [];
-    List<CityPlace> favorites = [];
-    List<CityReview> reviews = [];
+      List<CityPlace> places = [];
+      List<CityPlace> favorites = [];
+      List<CityReview> reviews = [];
 
-    for (var place in data["places"]) {
-      places.add(CityPlace.fromJson(place));
+      for (var place in data["places"]) {
+        places.add(CityPlace.fromJson(place));
+      }
+
+      for (var place in data["favorites"]) {
+        favorites.add(CityPlace.fromJson(place));
+      }
+
+      for (var review in data["reviews"]) {
+        reviews.add(CityReview.fromJson(review));
+      }
+
+      return {
+        "places": places,
+        "reviews": reviews,
+        "favorites": favorites
+      };
+    } catch (e) {
+      debugPrint(e.toString());
+
+      return {
+        "places": List<CityPlace>.from([]),
+        "reviews": List<CityReview>.from([]),
+        "favorites": List<CityPlace>.from([])
+      };
     }
-
-    for (var place in data["favorites"]) {
-      favorites.add(CityPlace.fromJson(place));
-    }
-
-    for (var review in data["reviews"]) {
-      reviews.add(CityReview.fromJson(review));
-    }
-
-    return {
-      "places": places,
-      "reviews": reviews,
-      "favorites": favorites
-    };
   }
 }

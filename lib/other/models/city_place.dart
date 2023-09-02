@@ -8,7 +8,7 @@ class CityPlace {
   final String name;
   final String description;
   final GeoPoint geoPoint;
-  final double authorRating;
+  final num authorRating;
   final List<CityReview> reviews;
   final List<String> images;
 
@@ -56,7 +56,7 @@ class CityPlace {
       description: data["description"],
       geoPoint: data["geoPoint"],
       reviews: reviews,
-      images: data["images"],
+      images: List<String>.from(data["images"]),
       authorRating: data["authorRating"]
     );
   }
