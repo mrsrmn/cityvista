@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,6 +8,8 @@ import 'package:cityvista/widgets/home_screen/account_page/places_view.dart';
 import 'package:cityvista/widgets/home_screen/account_page/favorites_view.dart';
 import 'package:cityvista/widgets/home_screen/account_page/reviews_view.dart';
 import 'package:cityvista/widgets/home_screen/account_page/badges_view.dart';
+import 'package:cityvista/other/models/city_place.dart';
+import 'package:cityvista/other/models/city_review.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -81,40 +84,23 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
               formatTime(user.metadata.creationTime!.millisecondsSinceEpoch)
             }"),
             const SizedBox(height: 5),
-            TabBar(
-              controller: tabController,
-              tabs: const [
-                Tab(
-                  icon: Icon(Icons.travel_explore),
-                ),
-                Tab(
-                  icon: Icon(Icons.favorite),
-                ),
-                Tab(
-                  icon: Icon(Icons.comment),
-                ),
-                Tab(
-                  icon: Icon(Icons.workspace_premium),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 400,
-              child: SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: TabBarView(
-                    controller: tabController,
-                    children: const [
-                      PlacesView(),
-                      FavoritesView(),
-                      ReviewsView(),
-                      BadgesView()
-                    ],
-                  ),
-                ),
-              ),
+            FutureBuilder(
+              future: getProfileData(),
+              builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                Map<String, dynamic> data = snapshot.data!;
+
+                return tabView(
+                  places: data["places"],
+                  favorites: data["favorites"],
+                  reviews: data["reviews"]
+                );
+              },
             )
           ],
         ),
@@ -142,5 +128,79 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
     var dt = DateTime.fromMillisecondsSinceEpoch(milliseconds);
 
     return DateFormat("dd MMMM yyyy").format(dt);
+  }
+
+  Widget tabView({
+    required List<CityPlace> places,
+    required List<CityPlace> favorites,
+    required List<CityReview> reviews,
+  }) {
+    return Column(
+      children: [
+        TabBar(
+          controller: tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.travel_explore),
+            ),
+            Tab(
+              icon: Icon(Icons.favorite),
+            ),
+            Tab(
+              icon: Icon(Icons.comment),
+            ),
+            Tab(
+              icon: Icon(Icons.workspace_premium),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 400,
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: TabBarView(
+                controller: tabController,
+                children: [
+                  PlacesView(places: places),
+                  FavoritesView(favorites: favorites),
+                  ReviewsView(reviews: reviews),
+                  const BadgesView()
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Future<Map<String, dynamic>> getProfileData() async {
+    Map<String, dynamic> data = (await FirebaseFirestore.instance.collection(
+      "users"
+    ).doc(user.uid).get()).data()!;
+
+    List<CityPlace> places = [];
+    List<CityPlace> favorites = [];
+    List<CityReview> reviews = [];
+
+    for (var place in data["places"]) {
+      places.add(CityPlace.fromJson(place));
+    }
+
+    for (var place in data["favorites"]) {
+      favorites.add(CityPlace.fromJson(place));
+    }
+
+    for (var review in data["reviews"]) {
+      reviews.add(CityReview.fromJson(review));
+    }
+
+    return {
+      "places": places,
+      "reviews": reviews,
+      "favorites": favorites
+    };
   }
 }
