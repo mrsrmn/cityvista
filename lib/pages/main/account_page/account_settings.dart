@@ -7,6 +7,7 @@ import 'package:cityvista/widgets/home_screen/account_page/account_settings/sign
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AccountSettings extends StatelessWidget {
   final User user = FirebaseAuth.instance.currentUser!;
@@ -30,25 +31,55 @@ class AccountSettings extends StatelessWidget {
               child: SafeArea(
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const SignOut(),
-                      const SizedBox(width: 5),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            HapticFeedback.lightImpact();
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.red),
-                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const SignOut(),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                HapticFeedback.lightImpact();
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.red),
+                                foregroundColor: MaterialStateProperty.all(Colors.white),
+                              ),
+                              child: const Text(
+                                "Delete Account",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              )
+                            ),
                           ),
-                          child: const Text(
-                            "Delete Account",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          )
-                        ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      FutureBuilder(
+                        future: PackageInfo.fromPlatform(),
+                        builder: (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
+                          if (snapshot.connectionState != ConnectionState.done) {
+                            return const Text("Loading App Info...");
+                          }
+
+                          PackageInfo info = snapshot.data!;
+
+                          return Column(
+                            children: [
+                              const Text(
+                                "Cityvista",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17
+                                )
+                              ),
+                              Text("Version ${info.version} | Build ${info.buildNumber}"),
+                              const Text("© Emir Sürmen, 2023")
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
