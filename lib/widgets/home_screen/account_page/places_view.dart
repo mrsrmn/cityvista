@@ -11,6 +11,10 @@ class PlacesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (places.isEmpty) {
+      return const Center(child: Text("You don't have any places!"));
+    }
+
     return ListView.builder(
       itemCount: places.length,
       itemBuilder: (BuildContext context, int index) {
