@@ -195,7 +195,7 @@ class _AddPlaceState extends State<AddPlace> {
                     name: nameController.text,
                     description: descriptionController.text,
                     geoPoint: geoPoint!,
-                    authorRating: currentRating,
+                    rating: currentRating,
                     reviews: [],
                     images: imageUrls
                   ));
@@ -273,7 +273,6 @@ class _AddPlaceState extends State<AddPlace> {
       }
 
       if (images.isNotEmpty) {
-        imagesList = [];
         imagesList.addAll(images);
 
         if (context.mounted) {
@@ -282,7 +281,7 @@ class _AddPlaceState extends State<AddPlace> {
 
         Utils.alertPopup(
           true,
-          "Uploaded ${imagesList.length} images!"
+          "Uploaded ${images.length} images!"
         );
 
         setState(() {});
@@ -313,9 +312,9 @@ class _AddPlaceState extends State<AddPlace> {
     if (imagesList.isNotEmpty) {
       for (var image in imagesList) {
         Reference imageRef = storageRef.child("/places/$authorUid/$placeId/${image.name}");
-        await imageRef.putFile(File(image.path));
+        TaskSnapshot task = await imageRef.putData(await image.readAsBytes());
 
-        imagesUrlList.add(await imageRef.getDownloadURL());
+        imagesUrlList.add(await task.ref.getDownloadURL());
       }
     }
 

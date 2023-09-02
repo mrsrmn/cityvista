@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:cityvista/other/enums/location_result.dart';
 import 'package:cityvista/other/models/city_location.dart';
 import 'package:cityvista/other/utils.dart';
+import 'package:cityvista/other/models/city_place.dart';
+import 'package:cityvista/other/constants.dart';
+import 'package:cityvista/widgets/home_screen/place_details.dart';
 
 import 'package:flutter_map/flutter_map.dart';
+import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 
 class CityvistaMap extends StatefulWidget {
   final MapController controller;
@@ -16,11 +22,14 @@ class CityvistaMap extends StatefulWidget {
 }
 
 class _CityvistaMapState extends State<CityvistaMap> {
-  late Future<CityLocation> future;
+  late Future future;
 
   @override
   void initState() {
-    future = Utils.getLocation(context);
+    future = Future.wait([
+      Utils.getLocation(context),
+      Utils.getPlaces()
+    ]);
     super.initState();
   }
 
@@ -33,7 +42,8 @@ class _CityvistaMapState extends State<CityvistaMap> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        CityLocation location = snapshot.data;
+        CityLocation location = snapshot.data[0];
+        List<CityPlace> places = snapshot.data[1];
 
         List<Marker> markers = [];
 
@@ -44,11 +54,42 @@ class _CityvistaMapState extends State<CityvistaMap> {
               builder: (context) {
                 return const Icon(
                   Icons.my_location,
-                  size: 30,
+                  size: 28,
                 );
               }
             )
           );
+        }
+
+        for (CityPlace place in places) {
+          markers.add(Marker(
+            width: 40,
+            height: 40,
+            point: LatLng(place.geoPoint.latitude, place.geoPoint.longitude),
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  Get.to(() => PlaceDetails(place: place));
+                },
+                child: Container(
+                  key: const ValueKey(0),
+                  padding: const EdgeInsets.all(5),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: kTextColor),
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: const Icon(
+                    Icons.travel_explore_outlined,
+                    color: kTextColor,
+                  )
+                ),
+              );
+            }
+          ));
         }
 
         return FlutterMap(

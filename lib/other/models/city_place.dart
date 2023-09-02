@@ -8,7 +8,7 @@ class CityPlace {
   final String name;
   final String description;
   final GeoPoint geoPoint;
-  final num authorRating;
+  final num rating;
   final List<CityReview> reviews;
   final List<String> images;
 
@@ -20,7 +20,7 @@ class CityPlace {
     required this.geoPoint,
     required this.reviews,
     required this.images,
-    required this.authorRating
+    required this.rating
   });
 
   Map<String, dynamic> toJson() {
@@ -38,7 +38,7 @@ class CityPlace {
       "geoPoint": geoPoint,
       "reviews": mappedReviews,
       "images": images,
-      "authorRating": authorRating
+      "rating": rating
     };
   }
 
@@ -57,7 +57,7 @@ class CityPlace {
       geoPoint: data["geoPoint"],
       reviews: reviews,
       images: List<String>.from(data["images"]),
-      authorRating: data["authorRating"]
+      rating: data["rating"]
     );
   }
 }

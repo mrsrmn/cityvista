@@ -10,7 +10,7 @@ class Database {
     try {
       await firestore.collection("places").doc(place.id).set(placeMap);
       await firestore.collection("users").doc(place.authorUid).update({
-        "places": FieldValue.arrayUnion([place.toJson()])
+        "places": FieldValue.arrayUnion([placeMap])
       });
     } catch (e) {
       throw Exception(e.toString());

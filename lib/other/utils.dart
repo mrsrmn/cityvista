@@ -1,15 +1,17 @@
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:cityvista/bloc/register/register_bloc.dart';
 import 'package:cityvista/other/enums/location_result.dart';
 import 'package:cityvista/other/models/city_location.dart';
+import 'package:cityvista/other/models/city_place.dart';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app_settings/app_settings.dart';
 
 class Utils {
   static validatePhone(String value, Emitter emit) {
@@ -138,5 +140,82 @@ class Utils {
         },
       );
     }
+  }
+
+  static Future<List<CityPlace>> getPlaces() async {
+    List<CityPlace> places = [];
+    List data = (await FirebaseFirestore.instance.collection("places").get()).docs;
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> place in data) {
+      places.add(CityPlace.fromJson(place.data()));
+    }
+
+    return places;
+  }
+
+  static Widget buildPlaceStars(CityPlace place) {
+    Widget stars = const Text("Loading Rating");
+    num rating = place.rating;
+    int reviewCount = place.reviews.length + 1;
+
+    if (1 <= rating && rating < 2) {
+      stars = const Row(
+        children: [
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.grey),
+          Icon(Icons.star, color: Colors.grey),
+          Icon(Icons.star, color: Colors.grey),
+          Icon(Icons.star, color: Colors.grey),
+        ],
+      );
+    } else if (2 <= rating && rating < 3) {
+      stars = const Row(
+        children: [
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.grey),
+          Icon(Icons.star, color: Colors.grey),
+          Icon(Icons.star, color: Colors.grey),
+        ],
+      );
+    } else if (3 <= rating && rating < 4) {
+      stars = const Row(
+        children: [
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.grey),
+          Icon(Icons.star, color: Colors.grey),
+        ],
+      );
+    } else if (4 <= rating && rating < 5) {
+      stars = const Row(
+        children: [
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.grey),
+        ],
+      );
+    } else {
+      stars = const Row(
+        children: [
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+          Icon(Icons.star, color: Colors.orange),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        stars,
+        const SizedBox(width: 5),
+        Text("($reviewCount)", style: const TextStyle(fontSize: 18))
+      ],
+    );
   }
 }
