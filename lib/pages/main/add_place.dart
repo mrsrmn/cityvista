@@ -30,6 +30,7 @@ class _AddPlaceState extends State<AddPlace> {
   final TextEditingController descriptionController = TextEditingController();
   final String placeId = const Uuid().v1();
   final Reference storageRef = FirebaseStorage.instance.ref();
+  final String authorUid = FirebaseAuth.instance.currentUser!.uid;
 
   List<XFile> imagesList = [];
   String address = "";
@@ -190,7 +191,7 @@ class _AddPlaceState extends State<AddPlace> {
 
                   await Database().addPlace(CityPlace(
                     id: placeId,
-                    authorUid: FirebaseAuth.instance.currentUser!.uid,
+                    authorUid: authorUid,
                     name: nameController.text,
                     description: descriptionController.text,
                     geoPoint: geoPoint!,
@@ -311,7 +312,7 @@ class _AddPlaceState extends State<AddPlace> {
 
     if (imagesList.isNotEmpty) {
       for (var image in imagesList) {
-        Reference imageRef = storageRef.child("/places/$placeId/${image.name}");
+        Reference imageRef = storageRef.child("/places/$authorUid/$placeId/${image.name}");
         await imageRef.putFile(File(image.path));
 
         imagesUrlList.add(await imageRef.getDownloadURL());

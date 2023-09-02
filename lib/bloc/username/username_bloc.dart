@@ -13,7 +13,7 @@ class UsernameBloc extends Bloc<UsernameEvent, UsernameState> {
 
   void setUsernameOfUser(SetUsernameOfUser event, Emitter emit) async {
     final userRef = FirebaseFirestore.instance.collection("users").doc(
-        FirebaseAuth.instance.currentUser!.phoneNumber!
+      FirebaseAuth.instance.currentUser!.phoneNumber!
     );
 
     emit(UsernameLoading());

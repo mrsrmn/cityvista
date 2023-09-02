@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:cityvista/other/constants.dart';
 import 'package:cityvista/pages/main/account_page/account_settings.dart';
@@ -8,9 +9,9 @@ import 'package:cityvista/widgets/home_screen/account_page/reviews_view.dart';
 import 'package:cityvista/widgets/home_screen/account_page/badges_view.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -129,7 +130,11 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
         size: 60,
       );
     } else {
-      return Image.network(user.photoURL!);
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: user.photoURL!,
+        )
+      );
     }
   }
 
