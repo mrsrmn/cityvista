@@ -1,0 +1,4 @@
+enum BadgeType {
+  places,
+  reviews
+}
