@@ -11,6 +11,8 @@ class CityPlace {
   final num rating;
   final List<CityReview> reviews;
   final List<String> images;
+  final String? website;
+  final String? phone;
 
   CityPlace({
     required this.id,
@@ -20,7 +22,9 @@ class CityPlace {
     required this.geoPoint,
     required this.reviews,
     required this.images,
-    required this.rating
+    required this.rating,
+    required this.website,
+    required this.phone
   });
 
   Map<String, dynamic> toJson() {
@@ -38,7 +42,9 @@ class CityPlace {
       "geoPoint": geoPoint,
       "reviews": mappedReviews,
       "images": images,
-      "rating": rating
+      "rating": rating,
+      "website": website,
+      "phone": phone
     };
   }
 
@@ -57,7 +63,9 @@ class CityPlace {
       geoPoint: data["geoPoint"],
       reviews: reviews,
       images: List<String>.from(data["images"]),
-      rating: data["rating"]
+      rating: data["rating"],
+      website: data["website"],
+      phone: data["phone"]
     );
   }
 }
