@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -5,6 +8,7 @@ import 'package:cityvista/bloc/register/register_bloc.dart';
 import 'package:cityvista/other/enums/location_result.dart';
 import 'package:cityvista/other/models/city_location.dart';
 import 'package:cityvista/other/models/city_place.dart';
+import 'package:cityvista/other/enums/price_range.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,6 +16,7 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:http/http.dart' as http;
 
 class Utils {
   static validatePhone(String value, Emitter emit) {
@@ -217,5 +222,90 @@ class Utils {
         Text("($reviewCount)", style: const TextStyle(fontSize: 18))
       ],
     );
+  }
+
+  static Widget buildPriceRange(CityPlace place) {
+    switch (place.priceRange) {
+      case PriceRange.one:
+        return const Row(
+          children: [
+            SizedBox(
+              width: 12,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.green)
+            ),
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.grey)
+            ),
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.grey)
+            ),
+          ],
+        );
+      case PriceRange.two:
+        return const Row(
+          children: [
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.green)
+            ),
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.green)
+            ),
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.grey)
+            ),
+          ],
+        );
+      case PriceRange.three:
+        return const Row(
+          children: [
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.green)
+            ),
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.green)
+            ),
+            SizedBox(
+              width: 15,
+              height: 24,
+              child: Icon(CupertinoIcons.money_dollar, color: Colors.green)
+            ),
+          ],
+        );
+    }
+  }
+
+  static Future<bool> checkProfanity(String text) async {
+    var request = await http.get(
+      Uri.parse("https://fuk.ai/detect-hatespeech?input=$text&eliminate_profanity=false"),
+      headers: {
+        "Authorization": "Token 9d65206e42b05a8464e32b206f245ab64cd34874d5a5602f61b7f486a24faf89"
+      }
+    );
+
+    if (request.statusCode != 200) {
+      return true;
+    }
+
+
+    if (double.parse(jsonDecode(request.body)["result"]["probability"].toString()) > 70) {
+      return true;
+    }
+
+    return false;
   }
 }

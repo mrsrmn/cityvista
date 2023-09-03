@@ -58,5 +58,21 @@
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Cityvista will use your location to show whats around you in the map.</string>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>comgooglemaps</string>
+        <string>baidumap</string>
+        <string>iosamap</string>
+        <string>waze</string>
+        <string>yandexmaps</string>
+        <string>yandexnavi</string>
+        <string>citymapper</string>
+        <string>mapswithme</string>
+        <string>osmandmaps</string>
+        <string>dgis</string>
+        <string>qqmap</string>
+        <string>here-location</string>
+        <string>tomtomgo</string>
+    </array>
 </dict>
 </plist>

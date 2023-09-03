@@ -1,4 +1,5 @@
 import 'package:cityvista/other/models/city_review.dart';
+import 'package:cityvista/other/enums/price_range.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -13,6 +14,8 @@ class CityPlace {
   final List<String> images;
   final String? website;
   final String? phone;
+  final String address;
+  final PriceRange priceRange;
 
   CityPlace({
     required this.id,
@@ -24,7 +27,9 @@ class CityPlace {
     required this.images,
     required this.rating,
     required this.website,
-    required this.phone
+    required this.phone,
+    required this.address,
+    required this.priceRange
   });
 
   Map<String, dynamic> toJson() {
@@ -44,7 +49,9 @@ class CityPlace {
       "images": images,
       "rating": rating,
       "website": website,
-      "phone": phone
+      "phone": phone,
+      "address": address,
+      "priceRange": priceRange.name
     };
   }
 
@@ -65,7 +72,9 @@ class CityPlace {
       images: List<String>.from(data["images"]),
       rating: data["rating"],
       website: data["website"],
-      phone: data["phone"]
+      phone: data["phone"],
+      address: data["address"],
+      priceRange: PriceRange.values.byName(data["priceRange"])
     );
   }
 }

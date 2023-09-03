@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cityvista/other/enums/price_range.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -40,6 +41,7 @@ class _AddPlaceState extends State<AddPlace> {
   bool addressSelected = false;
   GeoPoint? geoPoint;
   double currentRating = 1;
+  int currentPriceRange = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +107,29 @@ class _AddPlaceState extends State<AddPlace> {
                   ),
                   onRatingUpdate: (rating) {
                     currentRating = rating;
+                  },
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  "Price Range",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+                RatingBar.builder(
+                  initialRating: 2,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 3,
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.attach_money,
+                    color: Colors.green,
+                    size: 12,
+                  ),
+                  onRatingUpdate: (priceRange) {
+                    currentPriceRange = priceRange.toInt();
                   },
                 ),
                 const SizedBox(height: 15),
@@ -225,6 +250,17 @@ class _AddPlaceState extends State<AddPlace> {
                 try {
                   List<String> imageUrls = await uploadImages();
 
+                  PriceRange priceRange = PriceRange.one;
+
+                  switch (currentPriceRange) {
+                    case 1:
+                      priceRange = PriceRange.one;
+                    case 2:
+                      priceRange = PriceRange.two;
+                    case 3:
+                      priceRange = PriceRange.three;
+                  }
+
                   await Database().addPlace(CityPlace(
                     id: placeId,
                     authorUid: authorUid,
@@ -235,7 +271,9 @@ class _AddPlaceState extends State<AddPlace> {
                     website: websiteController.text,
                     phone: phoneController.text,
                     reviews: [],
-                    images: imageUrls
+                    images: imageUrls,
+                    address: address,
+                    priceRange: priceRange
                   ));
 
                   if (mounted) {
@@ -250,10 +288,8 @@ class _AddPlaceState extends State<AddPlace> {
                 } catch (e) {
                   Utils.alertPopup(
                     false,
-                    "Couldn't add your place."
+                    e.toString()
                   );
-
-                  debugPrint(e.toString());
 
                   if (mounted) {
                     Navigator.pop(context);
@@ -333,10 +369,8 @@ class _AddPlaceState extends State<AddPlace> {
     } catch (exception) {
       Utils.alertPopup(
         false,
-        "Couldn't upload selected images."
+        exception.toString()
       );
-
-      debugPrint(exception.toString());
 
       if (mounted) {
         Navigator.pop(context);
