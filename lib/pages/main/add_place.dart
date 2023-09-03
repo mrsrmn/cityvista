@@ -17,6 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 
 class AddPlace extends StatefulWidget {
   const AddPlace({super.key});
@@ -28,6 +29,8 @@ class AddPlace extends StatefulWidget {
 class _AddPlaceState extends State<AddPlace> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final String placeId = const Uuid().v1();
   final Reference storageRef = FirebaseStorage.instance.ref();
   final String authorUid = FirebaseAuth.instance.currentUser!.uid;
@@ -105,6 +108,39 @@ class _AddPlaceState extends State<AddPlace> {
                   },
                 ),
                 const SizedBox(height: 15),
+                const Text(
+                  "Website (optional)",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+                CustomTextField(
+                  controller: websiteController,
+                  fontWeight: FontWeight.w700,
+                  hintText: "https://example.com",
+                  keyboardType: TextInputType.url,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Phone Number (optional)",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+                CustomTextField(
+                  controller: phoneController,
+                  fontWeight: FontWeight.w700,
+                  hintText: "Phone Number",
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    PhoneInputFormatter(allowEndlessPhone: false)
+                  ],
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 10),
                 const Text(
                   "Location",
                   style: TextStyle(
@@ -196,6 +232,8 @@ class _AddPlaceState extends State<AddPlace> {
                     description: descriptionController.text,
                     geoPoint: geoPoint!,
                     rating: currentRating,
+                    website: websiteController.text,
+                    phone: phoneController.text,
                     reviews: [],
                     images: imageUrls
                   ));
