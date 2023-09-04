@@ -135,8 +135,8 @@ class ChangePfp extends StatelessWidget {
           aspectRatioPresets: [
             CropAspectRatioPreset.square,
           ],
-          maxHeight: 100,
-          maxWidth: 100,
+          maxHeight: 300,
+          maxWidth: 300,
           compressFormat: ImageCompressFormat.png,
           aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
           uiSettings: [
