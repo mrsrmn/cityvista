@@ -1,13 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cityvista/other/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:cityvista/other/models/city_place.dart';
 import 'package:cityvista/other/utils.dart';
+import 'package:cityvista/other/constants.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -124,13 +125,37 @@ class PlaceDetails extends StatelessWidget {
                         );
                         return;
                       } else {
-                        await availableMaps.first.showMarker(
-                          coords: Coords(
-                            place.geoPoint.latitude,
-                            place.geoPoint.longitude
-                          ),
-                          title: place.name,
-                        );
+                        if (context.mounted) {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SafeArea(
+                                child: SingleChildScrollView(
+                                  child: Wrap(
+                                    children: <Widget>[
+                                      for (var map in availableMaps)
+                                        ListTile(
+                                          onTap: () => map.showMarker(
+                                            coords: Coords(
+                                              place.geoPoint.latitude,
+                                              place.geoPoint.longitude
+                                            ),
+                                            title: place.name,
+                                          ),
+                                          title: Text(map.mapName),
+                                          leading: SvgPicture.asset(
+                                            map.icon,
+                                            height: 30.0,
+                                            width: 30.0,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       }
                     },
                     icon: const Row(
