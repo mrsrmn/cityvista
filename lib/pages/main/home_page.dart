@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cityvista/widgets/home_screen/cityvista_map.dart';
 import 'package:cityvista/widgets/home_screen/home_bottombar.dart';
 import 'package:cityvista/widgets/home_screen/home_topbar.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -19,6 +20,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarBrightness: MediaQuery.of(context).platformBrightness
+    ));
+
     return Scaffold(
       body: TapRegion(
         onTapOutside: (_) => FocusScope.of(context).unfocus(),

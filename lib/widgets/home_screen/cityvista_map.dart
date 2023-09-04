@@ -104,6 +104,10 @@ class _CityvistaMapState extends State<CityvistaMap> {
             TileLayer(
               urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
               subdomains: const ['a', 'b', 'c'],
+              tileBuilder: MediaQuery.of(context).platformBrightness == Brightness.dark
+                  ? darkModeTileBuilder
+                  : null,
+              backgroundColor: Colors.black54
             ),
             MarkerLayer(
               markers: markers,
