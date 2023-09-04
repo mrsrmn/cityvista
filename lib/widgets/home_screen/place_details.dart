@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:cityvista/other/models/city_place.dart';
 import 'package:cityvista/other/utils.dart';
 import 'package:cityvista/other/constants.dart';
+import 'package:cityvista/other/models/profile.dart';
+import 'package:cityvista/other/database.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
@@ -55,6 +57,13 @@ class PlaceDetails extends StatelessWidget {
                             maxScale: 3,
                             child: CachedNetworkImage(
                               imageUrl: item,
+                              errorWidget: (context, _, __) {
+                                return const Material(
+                                  child: Center(
+                                    child: Text("Couldn't load image!")
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         )
@@ -70,6 +79,19 @@ class PlaceDetails extends StatelessWidget {
                 fit: BoxFit.cover,
                 child: CachedNetworkImage(
                   imageUrl: item,
+                  errorWidget: (context, _, __) {
+                    return const Center(
+                      child: SizedBox(
+                        width: 10,
+                        height: 10,
+                        child: Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 5,
+                        ),
+                      )
+                    );
+                  },
                 ),
               ),
             ),
@@ -120,6 +142,7 @@ class PlaceDetails extends StatelessWidget {
                       )
                     ),
                   ),
+                buildFavorite(),
                 PopupMenuItem(
                   child: IconButton(
                     onPressed: () async {
@@ -206,13 +229,15 @@ class PlaceDetails extends StatelessWidget {
             height: 200,
             width: double.infinity,
             color: kTextColor.withOpacity(.1),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: images.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                return images[index];
-              }
+            child: Center(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: images.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  return images[index];
+                }
+              ),
             ),
           ),
           Expanded(
@@ -274,5 +299,48 @@ class PlaceDetails extends StatelessWidget {
     }
 
     return const Text("hey");
+  }
+
+  PopupMenuItem buildFavorite() {
+    return PopupMenuItem(
+      child: FutureBuilder(
+        future: Database().getProfile(FirebaseAuth.instance.currentUser!.uid),
+        builder: (context, AsyncSnapshot<Profile> snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+              child: SizedBox(
+                width: 25,
+                height: 25,
+                child: CircularProgressIndicator()
+              )
+            );
+          }
+
+          Profile user = snapshot.data!;
+
+          String text;
+
+          if (user.favorites.contains(place)) {
+            text = "Remove from";
+          } else {
+            text = "Add to";
+          }
+
+          return IconButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+            },
+            icon: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(CupertinoIcons.heart),
+                const SizedBox(width: 10),
+                Text("$text Favorites")
+              ],
+            )
+          );
+        }
+      ),
+    );
   }
 }
