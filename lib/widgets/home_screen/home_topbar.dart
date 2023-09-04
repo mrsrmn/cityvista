@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cityvista/widgets/custom_text_field.dart';
 import 'package:cityvista/other/constants.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class HomeTopbar extends StatefulWidget {
@@ -32,6 +33,7 @@ class _HomeTopbarState extends State<HomeTopbar> {
   }
 
   void _onFocusChange() {
+    HapticFeedback.lightImpact();
     setState(() {
       focused = !focused;
     });
