@@ -25,34 +25,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ));
 
     return Scaffold(
-      body: TapRegion(
-        onTapOutside: (_) => FocusScope.of(context).unfocus(),
-        child: Stack(
-          children: [
-            CityvistaMap(
-              controller: controller,
-            ),
-            const SafeArea(
-              child: HomeTopbar(),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: HomeBottombar(
-                    controller: controller,
-                    locationSelector: (LatLng destLocation, double destZoom) => _animatedMapMove(
-                      destLocation,
-                      destZoom,
-                      controller
-                    ),
+      body: Stack(
+        children: [
+          CityvistaMap(
+            controller: controller,
+          ),
+          const SafeArea(
+            child: HomeTopbar(),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: HomeBottombar(
+                  controller: controller,
+                  locationSelector: (LatLng destLocation, double destZoom) => _animatedMapMove(
+                    destLocation,
+                    destZoom,
+                    controller
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

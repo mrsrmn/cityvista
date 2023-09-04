@@ -18,6 +18,7 @@ class CustomTextField extends StatelessWidget {
   final FontWeight? fontWeight;
   final int? maxLines;
   final int? minLines;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -35,7 +36,8 @@ class CustomTextField extends StatelessWidget {
     this.contentPadding = 20,
     this.fontWeight,
     this.maxLines,
-    this.minLines
+    this.minLines,
+    this.focusNode
   });
 
   @override
@@ -48,6 +50,7 @@ class CustomTextField extends StatelessWidget {
       maxLength: maxLength,
       maxLines: maxLines,
       minLines: minLines,
+      focusNode: focusNode,
       style: TextStyle(
         fontFamily: fontFamily,
         color: textColor,

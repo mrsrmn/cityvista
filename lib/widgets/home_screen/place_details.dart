@@ -32,6 +32,8 @@ class PlaceDetails extends StatelessWidget {
           width: 170,
           child: GestureDetector(
             onTap: () {
+              HapticFeedback.lightImpact();
+
               showGeneralDialog(
                 context: context,
                 pageBuilder: (BuildContext context, _, __) {
