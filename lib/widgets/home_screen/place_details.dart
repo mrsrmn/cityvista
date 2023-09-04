@@ -57,10 +57,12 @@ class PlaceDetails extends StatelessWidget {
             }
           );
         },
-        child: FittedBox(
-          fit: BoxFit.fill,
-          child: CachedNetworkImage(
-            imageUrl: item,
+        child: SizedBox.expand(
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: CachedNetworkImage(
+              imageUrl: item,
+            ),
           ),
         ),
       );
@@ -198,8 +200,9 @@ class PlaceDetails extends StatelessWidget {
                 items: images,
                 options: CarouselOptions(
                   enableInfiniteScroll: false,
+                  enlargeFactor: 0.2,
                   enlargeCenterPage: true,
-                  viewportFraction: .9,
+                  viewportFraction: .7,
                   aspectRatio: 16 / 8,
                   scrollDirection: Axis.horizontal,
                   autoPlay: true,
