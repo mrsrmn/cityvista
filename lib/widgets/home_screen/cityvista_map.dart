@@ -78,7 +78,9 @@ class _CityvistaMapState extends State<CityvistaMap> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: MediaQuery.of(context).platformBrightness == Brightness.dark
+                      ? Colors.black.withOpacity(.9)
+                      : Colors.white,
                     border: Border.all(color: kTextColor),
                     borderRadius: BorderRadius.circular(10)
                   ),

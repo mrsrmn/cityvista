@@ -56,7 +56,9 @@ class CustomTextField extends StatelessWidget {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? Colors.black.withOpacity(.9)
+            : Colors.white,
         contentPadding: EdgeInsets.all(contentPadding),
         hintText: hintText,
         counter: counter,

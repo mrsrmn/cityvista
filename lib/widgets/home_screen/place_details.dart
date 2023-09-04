@@ -7,7 +7,6 @@ import 'package:cityvista/other/utils.dart';
 import 'package:cityvista/other/constants.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,47 +20,58 @@ class PlaceDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> images = place.images.map((item) {
-      return GestureDetector(
-        onTap: () {
-          showGeneralDialog(
-            context: context,
-            pageBuilder: (BuildContext context, _, __) {
-              return Container(
-                color: Colors.black.withOpacity(.8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SafeArea(
-                      child: IconButton(
-                        onPressed: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(Icons.cancel_outlined, color: Colors.white)
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: InteractiveViewer(
-                        panEnabled: true,
-                        minScale: 1,
-                        maxScale: 3,
-                        child: CachedNetworkImage(
-                          imageUrl: item,
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey)
+          ),
+          width: 170,
+          child: GestureDetector(
+            onTap: () {
+              showGeneralDialog(
+                context: context,
+                pageBuilder: (BuildContext context, _, __) {
+                  return Container(
+                    color: Colors.black.withOpacity(.8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SafeArea(
+                          child: IconButton(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.cancel_outlined, color: Colors.white)
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: InteractiveViewer(
+                            panEnabled: true,
+                            minScale: 1,
+                            maxScale: 3,
+                            child: CachedNetworkImage(
+                              imageUrl: item,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
               );
-            }
-          );
-        },
-        child: SizedBox.expand(
-          child: FittedBox(
-            fit: BoxFit.fill,
-            child: CachedNetworkImage(
-              imageUrl: item,
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: CachedNetworkImage(
+                  imageUrl: item,
+                ),
+              ),
             ),
           ),
         ),
@@ -193,21 +203,16 @@ class PlaceDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
+            height: 200,
+            width: double.infinity,
             color: kTextColor.withOpacity(.1),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CarouselSlider(
-                items: images,
-                options: CarouselOptions(
-                  enableInfiniteScroll: false,
-                  enlargeFactor: 0.2,
-                  enlargeCenterPage: true,
-                  viewportFraction: .7,
-                  aspectRatio: 16 / 8,
-                  scrollDirection: Axis.horizontal,
-                  autoPlay: true,
-                ),
-              ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: images.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return images[index];
+              }
             ),
           ),
           Expanded(

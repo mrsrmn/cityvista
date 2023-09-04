@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:cityvista/pages/main/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,7 +8,9 @@ import 'package:cityvista/pages/main/start_page.dart';
 import 'package:cityvista/firebase_options.dart';
 import 'package:cityvista/injection_container.dart' as sl;
 import 'package:cityvista/other/authentication.dart';
+import 'package:cityvista/pages/main/home_page.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 
@@ -57,15 +57,24 @@ class CityvistaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: "Cityvista",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: kTextColor),
-        fontFamily: "Lato",
-        useMaterial3: true,
-      ),
-      home: home,
+    return Builder(
+      builder: (context) {
+        Brightness currentBrightness = MediaQuery.of(context).platformBrightness;
+
+        return GetMaterialApp(
+          title: "Cityvista",
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: kTextColor,
+              brightness: currentBrightness
+            ),
+            fontFamily: "Lato",
+            useMaterial3: true,
+          ),
+          home: home,
+        );
+      }
     );
   }
 }

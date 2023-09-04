@@ -32,7 +32,9 @@ class HomeBottombar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? Colors.black.withOpacity(.9)
+            : Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: Colors.grey,
