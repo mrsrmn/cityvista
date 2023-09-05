@@ -37,7 +37,6 @@ class Utils {
     Get.snackbar(
       success ? "Success!" : "Error!",
       message,
-      colorText: Colors.black,
       icon: Icon(
         success ? Icons.verified_outlined : Icons.warning_amber,
         color: success ? Colors.green : Colors.red

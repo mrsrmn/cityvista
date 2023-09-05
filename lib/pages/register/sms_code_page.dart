@@ -78,9 +78,6 @@ class _SmsCodePageState extends State<SmsCodePage> {
 
                             return Text(
                               time.toInt().toString(),
-                              style: const TextStyle(
-                                color: Colors.black
-                              ),
                             );
                           },
                           onFinished: () {
