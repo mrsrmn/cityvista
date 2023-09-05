@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +14,12 @@ import 'package:cityvista/other/enums/price_range.dart';
 import 'package:bloc/bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_storage/firebase_storage.dart';
 
 class Utils {
   static validatePhone(String value, Emitter emit) {
@@ -306,5 +309,154 @@ class Utils {
     }
 
     return false;
+  }
+
+  static void onPhotoSelectorPressed(
+    BuildContext context,
+    StateSetter setState,
+    List<XFile> imagesList
+  ) async {
+    HapticFeedback.lightImpact();
+
+    try {
+      if (context.mounted) {
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: false,
+          pageBuilder: (BuildContext context, _, __) {
+            return Container(
+              color: Colors.black.withOpacity(.5),
+              child: const Center(child: CircularProgressIndicator())
+            );
+          },
+        );
+      }
+
+      List<XFile>? images = await ImagePicker().pickMultiImage(
+          requestFullMetadata: false
+      );
+
+      if (images.length > 5) {
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+
+        Utils.alertPopup(
+          false,
+          "You can select a maximum of 5 pictures!"
+        );
+        return;
+      }
+
+      if (images.isNotEmpty) {
+        imagesList.addAll(images);
+
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+
+        Utils.alertPopup(
+            true,
+            "Uploaded ${images.length} images!"
+        );
+
+        setState(() {});
+      } else {
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+
+        return;
+      }
+    } catch (exception) {
+      Utils.alertPopup(
+        false,
+        exception.toString()
+      );
+
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  static Future<List<String>> uploadImages(
+    List<XFile> imagesList,
+    String authorUid,
+    String placeId,
+    Reference storageRef
+  ) async {
+    List<String> imagesUrlList = [];
+
+    if (imagesList.isNotEmpty) {
+      for (var image in imagesList) {
+        Reference imageRef = storageRef.child("/places/$authorUid/$placeId/${image.name}");
+        TaskSnapshot task = await imageRef.putData(await image.readAsBytes());
+
+        imagesUrlList.add(await task.ref.getDownloadURL());
+      }
+    }
+
+    return imagesUrlList;
+  }
+
+  static Widget buildImagesView(List<XFile> imagesList, StateSetter setState) {
+    if (imagesList.isEmpty) {
+      return const Text("No images selected.");
+    } else {
+      return SizedBox(
+        height: 150,
+        child: ListView.builder(
+          itemCount: imagesList.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Image.file(File(imagesList[index].path)),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(99),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(.8),
+                              offset: const Offset(0, 1),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          color: Colors.red,
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              imagesList.removeAt(index);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        ),
+      );
+    }
   }
 }
