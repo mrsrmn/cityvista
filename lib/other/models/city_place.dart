@@ -1,3 +1,4 @@
+import 'package:cityvista/other/database.dart';
 import 'package:cityvista/other/models/city_review.dart';
 import 'package:cityvista/other/enums/price_range.dart';
 
@@ -53,6 +54,10 @@ class CityPlace {
       "address": address,
       "priceRange": priceRange.name
     };
+  }
+
+  Future<CityPlace> reload() async {
+    return await Database().getPlace(id);
   }
 
   factory CityPlace.fromJson(Map<String, dynamic> data) {

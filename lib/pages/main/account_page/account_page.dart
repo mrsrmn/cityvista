@@ -1,3 +1,4 @@
+import 'package:cityvista/other/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +14,6 @@ import 'package:cityvista/other/models/city_review.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class AccountPage extends StatefulWidget {
@@ -83,7 +83,7 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
             )),
             const SizedBox(height: 5),
             Text("Member Since: ${
-              formatTime(user.metadata.creationTime!.millisecondsSinceEpoch)
+              Utils.formatTime(user.metadata.creationTime!.millisecondsSinceEpoch)
             }"),
             const SizedBox(height: 5),
             FutureBuilder(
@@ -124,12 +124,6 @@ class _AccountPageState extends State<AccountPage> with TickerProviderStateMixin
         )
       );
     }
-  }
-
-  String formatTime(int milliseconds) {
-    var dt = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-
-    return DateFormat("dd MMMM yyyy").format(dt);
   }
 
   Widget tabView({

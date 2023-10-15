@@ -57,7 +57,7 @@ class BadgesView extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 LinearPercentIndicator(
-                  center: Text("$currentNumber/${currentBadge.count}"),
+                  center: Text("$currentNumber/${currentBadge.count}", style: TextStyle(color: Colors.black)),
                   padding: EdgeInsets.zero,
                   animation: true,
                   barRadius: const Radius.circular(10),

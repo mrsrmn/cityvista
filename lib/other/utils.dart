@@ -15,6 +15,7 @@ import 'package:bloc/bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_settings/app_settings.dart';
@@ -458,5 +459,11 @@ class Utils {
         ),
       );
     }
+  }
+
+  static String formatTime(int milliseconds) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+
+    return DateFormat("dd MMMM yyyy").format(dt);
   }
 }

@@ -1,3 +1,5 @@
+import 'package:cityvista/pages/main/place_details/add_review.dart';
+import 'package:cityvista/widgets/home_screen/place_details/review_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,14 +12,28 @@ import 'package:cityvista/other/database.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PlaceDetails extends StatelessWidget {
+class PlaceDetails extends StatefulWidget {
   final CityPlace place;
 
   const PlaceDetails({super.key, required this.place});
+
+  @override
+  State<PlaceDetails> createState() => _PlaceDetailsState();
+}
+
+class _PlaceDetailsState extends State<PlaceDetails> {
+  late CityPlace place;
+
+  @override
+  void initState() {
+    place = widget.place;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,10 +196,13 @@ class PlaceDetails extends StatelessWidget {
                                             title: place.name,
                                           ),
                                           title: Text(map.mapName),
-                                          leading: SvgPicture.asset(
-                                            map.icon,
-                                            height: 30.0,
-                                            width: 30.0,
+                                          leading: ClipRRect(
+                                            borderRadius: BorderRadius.circular(5),
+                                            child: SvgPicture.asset(
+                                              map.icon,
+                                              height: 30.0,
+                                              width: 30.0,
+                                            ),
                                           ),
                                         ),
                                     ],
@@ -205,6 +224,26 @@ class PlaceDetails extends StatelessWidget {
                     )
                   ),
                 ),
+                if (FirebaseAuth.instance.currentUser!.uid != place.authorUid)
+                  PopupMenuItem(
+                    child: IconButton(
+                      onPressed: () async {
+                        HapticFeedback.lightImpact();
+                        Get.to(() => AddReview(place: place))?.then((_) async {
+                          place = await place.reload();
+                          setState(() {});
+                        });
+                      },
+                      icon: const Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.message_outlined),
+                          SizedBox(width: 10),
+                          Text("Leave a Review")
+                        ],
+                      )
+                    ),
+                  ),
                 PopupMenuItem(
                   child: IconButton(
                     onPressed: () {},
@@ -282,25 +321,21 @@ class PlaceDetails extends StatelessWidget {
 
   Widget buildReviews() {
     if (place.reviews.isEmpty) {
-      return SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const Text(
-              "No reviews yet!",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            if (FirebaseAuth.instance.currentUser!.uid != place.authorUid)
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text("Leave a Review")
-              )
-          ],
+      return const SafeArea(
+        child: Text(
+          "No reviews yet!",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         )
       );
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: place.reviews.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ReviewCard(review: place.reviews[index]);
+        },
+      );
     }
-
-    return const Text("hey");
   }
 
   PopupMenuItem buildFavorite() {
@@ -321,25 +356,54 @@ class PlaceDetails extends StatelessWidget {
           Profile user = snapshot.data!;
 
           String text;
+          bool isFavorite = user.favorites.any((e) => e.id == place.id);
 
-          if (user.favorites.contains(place)) {
+          if (isFavorite) {
             text = "Remove from";
           } else {
             text = "Add to";
           }
 
-          return IconButton(
-            onPressed: () {
-              HapticFeedback.lightImpact();
-            },
-            icon: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(CupertinoIcons.heart),
-                const SizedBox(width: 10),
-                Text("$text Favorites")
-              ],
-            )
+          return StatefulBuilder(
+            builder: (context, StateSetter setter) {
+              return IconButton(
+                onPressed: () async {
+                  HapticFeedback.lightImpact();
+
+                  if (isFavorite) {
+                    bool isDone = await Database().removeFromFavorite(place);
+
+                    if (isDone) {
+                      Utils.alertPopup(true, "Removed from favorites!");
+                      setter(() {
+                        isFavorite = false;
+                      });
+                    } else {
+                      Utils.alertPopup(false, "Couldn't remove from favorites!");
+                    }
+                  } else {
+                    bool isDone = await Database().addToFavorite(place);
+
+                    if (isDone) {
+                      Utils.alertPopup(true, "Added to favorites!");
+                      setter(() {
+                        isFavorite = true;
+                      });
+                    } else {
+                      Utils.alertPopup(false, "Couldn't add to favorites!");
+                    }
+                  }
+                },
+                icon: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(CupertinoIcons.heart),
+                    const SizedBox(width: 10),
+                    Text("$text Favorites")
+                  ],
+                )
+              );
+            }
           );
         }
       ),

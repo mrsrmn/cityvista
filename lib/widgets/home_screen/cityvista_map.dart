@@ -6,7 +6,7 @@ import 'package:cityvista/other/models/city_location.dart';
 import 'package:cityvista/other/utils.dart';
 import 'package:cityvista/other/models/city_place.dart';
 import 'package:cityvista/other/constants.dart';
-import 'package:cityvista/widgets/home_screen/place_details.dart';
+import 'package:cityvista/pages/main/place_details/place_details.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';

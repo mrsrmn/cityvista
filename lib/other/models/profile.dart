@@ -6,6 +6,7 @@ class Profile {
   final String displayName;
   final List<CityPlace> favorites;
   final List<CityReview> reviews;
+  final String? photoUrl;
   final List<CityPlace> places;
 
   Profile({
@@ -13,7 +14,8 @@ class Profile {
     required this.displayName,
     required this.favorites,
     required this.reviews,
-    required this.places
+    required this.places,
+    required this.photoUrl
   });
 
   Map<String, dynamic> toJson() {
@@ -38,7 +40,8 @@ class Profile {
       "displayName": displayName,
       "favorites": mappedFavorites,
       "reviews": mappedReviews,
-      "places": mappedPlaces
+      "places": mappedPlaces,
+      "photoUrl": photoUrl
     };
   }
 
@@ -64,7 +67,8 @@ class Profile {
       displayName: data["displayName"],
       favorites: favorites,
       reviews: reviews,
-      places: places
+      places: places,
+      photoUrl: data["photoUrl"]
     );
   }
 }
